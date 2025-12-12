@@ -1,5 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
+import { addJob, updateJob } from '../../feature/jobs/jobsSlice'
 import {
   certificateOptions,
   educationOptions,
@@ -7,11 +10,8 @@ import {
   experienceOptions,
   hobbyOptions,
 } from '../../options'
-import { addJob, updateJob } from '../../feature/jobs/jobsSlice'
-import { useDispatch, useSelector } from 'react-redux'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
-export const AddJob = () => {
+export const AddJob = ({ isEdit, jobId: id }) => {
   const initialValues = {
     id: '',
     title: '',
@@ -21,22 +21,26 @@ export const AddJob = () => {
     employment_type: '',
     package_per_annum: '',
     rating: '',
-    job_description: '',
+    description: '',
     education: '',
     experience: '',
     certificates: '',
     hobby: '',
     datePosted: '',
+    application_deadline: '',
+    contact: '',
+    number_of_opening: '',
   }
 
-  const loc = useLocation()
-  const { id } = useParams()
+  // const loc = useLocation()
+  // const { id } = useParams()
+  // const isEdit = loc.pathname.includes('edit')
   const jobsData = useSelector(state => state.jobManager.jobs)
-  const isEdit = loc.pathname.includes('edit')
-  const navigate = useNavigate()
+
   const [formData, setFormData] = useState(
-    jobsData.find(job => job.id === id) ?? initialValues
+    isEdit ? jobsData?.find(job => job.id === id) : initialValues
   )
+  const navigate = useNavigate()
 
   const formConfig = [
     {
@@ -53,7 +57,15 @@ export const AddJob = () => {
       label: 'Company',
       type: 'text',
       tag: 'input',
-      required: false,
+      required: true,
+    },
+    {
+      id: 'contact',
+      name: 'contact',
+      label: 'Contact',
+      type: 'text',
+      tag: 'input',
+      required: true,
     },
     {
       id: 'company_logo_url',
@@ -80,10 +92,18 @@ export const AddJob = () => {
       options: employmentTypeOptions,
       required: true,
     },
-    {
+    !isEdit && {
       id: 'package_per_annum',
       name: 'package_per_annum',
-      label: 'Package per Annum',
+      label: 'Package Per Annum',
+      type: 'text',
+      tag: 'input',
+      required: true,
+    },
+    {
+      id: 'number_of_opening',
+      name: 'number_of_opening',
+      label: 'Number of Opening',
       type: 'text',
       tag: 'input',
       required: true,
@@ -98,7 +118,7 @@ export const AddJob = () => {
     },
     {
       id: 'description',
-      name: 'job_description',
+      name: 'description',
       label: 'Description',
       type: 'text',
       tag: 'textarea',
@@ -110,6 +130,14 @@ export const AddJob = () => {
       label: 'Date Posted',
       type: 'date',
       tag: 'input',
+    },
+    {
+      id: 'application_deadline',
+      name: 'application_deadline',
+      label: 'Application Deadline',
+      type: 'date',
+      tag: 'input',
+      required: true,
     },
     {
       id: 'education',
@@ -149,14 +177,10 @@ export const AddJob = () => {
     },
   ]
 
-  console.log('formdata', formData)
-
   const [errors, setErrors] = useState({})
   const dispatch = useDispatch()
 
   const handleChange = e => {
-    console.log(e.target.name, e.target.value)
-
     const { name, value } = e.target
     if (name === 'hobby' || name === 'certificates' || name === 'education') {
       setFormData({
@@ -221,10 +245,11 @@ export const AddJob = () => {
     const validationErrors = validateForm(formData)
 
     if (Object.keys(validationErrors).length === 0) {
-      console.log('Form Payload:', formData)
       const payload = {
         ...formData,
-        datePosted: formData.datePosted ? formData.datePosted : new Date(),
+        datePosted: formData.datePosted
+          ? formData.datePosted
+          : new Date().toISOString(),
       }
       if (isEdit) {
         dispatch(updateJob(payload))
@@ -249,7 +274,6 @@ export const AddJob = () => {
         position: 'top-center',
         autoClose: 2000,
       })
-      console.error('Validation Errors:', validationErrors)
     }
   }
 
@@ -304,7 +328,7 @@ export const AddJob = () => {
                 : 'border-gray-300 focus:border-blue-500'
             } ${value === '' ? 'text-gray-500' : 'text-gray-900'}`}
           >
-            <option value="" selected disabled hidden>
+            <option value="" selected disabled>
               {label}
             </option>
             {options.map(option => (
@@ -338,13 +362,21 @@ export const AddJob = () => {
     )
   }
 
+  if (isEdit && !formData) {
+    return (
+      <div className="absolute top-1/2 left-1/2">
+        <h1>No job found</h1>
+      </div>
+    )
+  }
+
   return (
     <>
       <ToastContainer />
       <div className="max-h-[calc(100vh-72px)] overflow-hidden bg-gray-100 scrollbar-hide p-4 flex ">
         <div className="bg-white p-8 hide-scrollbar rounded-lg overflow-y-auto shadow-xl w-full max-w-2xl mx-auto scrollbar-hide">
           <h1 className="text-3xl font-bold mb-6 text-gray-800 text-center">
-            Add New Job
+            {isEdit ? 'Update Job' : 'Add Job'}
           </h1>
           <form onSubmit={handleAddJob} className="space-y-4 scrollbar-hide">
             {formConfig.map((field, index) => renderFields(field, index))}

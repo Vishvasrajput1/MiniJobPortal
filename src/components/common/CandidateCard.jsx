@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom'
 import { removeCandidate, selectCandidate } from '../../feature/jobs/jobsSlice'
 
 const CandidateCard = ({ candidateDetails }) => {
-  // console.log('jobDetails', jobDetails)
   const dispatch = useDispatch()
   const [selected, setSelected] = useState(candidateDetails.isSelected)
 
@@ -47,11 +46,8 @@ const CandidateCard = ({ candidateDetails }) => {
     setSelected(false)
   }
   return (
-    <div className="bg-white border border-gray-300 rounded-md cursor-pointer">
-      <Link
-        // to={`/candidates/${id}`}
-        className="text-decoration-none flex flex-col gap-4 p-3"
-      >
+    <div className="bg-white border border-gray-300 rounded-md ">
+      <div className="text-decoration-none flex flex-col gap-4 p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img
@@ -155,7 +151,7 @@ const CandidateCard = ({ candidateDetails }) => {
             <span className="text-gray-800 text-sm">{hobby?.join(', ')}</span>
           </p>
         </div>
-      </Link>
+      </div>
     </div>
   )
 }

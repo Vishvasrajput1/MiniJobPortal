@@ -7,7 +7,6 @@ export const MyJobs = () => {
   const [activeIndex, setActiveIndex] = useState(0)
   const tabs = [{ title: 'Saved Jobs' }, { title: 'Applied Jobs' }]
   const activeTab = tabs[activeIndex]
-  console.log(activeTab, 'activeTab', activeIndex, 'activeIndex')
 
   return (
     <div className="flex flex-col items-center w-full bg-gray-100 max-h-[calc(100vh-72px)] h-[calc(100vh-76px)] p-4">

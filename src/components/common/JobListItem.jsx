@@ -8,9 +8,13 @@ const JobListItem = ({ jobDetails }) => {
     company_logo_url: companyLogoUrl,
     employment_type: employmentType,
     location,
+    job_category: jobCategory,
     package_per_annum: packagePerAnnum,
     rating,
+    company,
     title,
+    salary_from: salaryFrom,
+    salary_to: salaryTo,
     id,
   } = jobDetails
 
@@ -25,12 +29,13 @@ const JobListItem = ({ jobDetails }) => {
             <img
               src={companyLogoUrl}
               alt="company logo"
-              className="size-18 object-cover"
+              className="size-18 object-cover rounded-2xl"
             />
             <div className="title-rating-container-card">
               <h1 className="m-0 text-gray-900 font-roboto text-lg font-bold mb-1.5">
                 {title}
               </h1>
+              <p>{jobCategory}</p>
               <div className="flex items-center gap-2">
                 <AiFillStar className="text-#fbbf24 size-4" />
                 <p className="m-0 text-gray-400 font-roboto text-base font-medium">
@@ -39,6 +44,7 @@ const JobListItem = ({ jobDetails }) => {
               </div>
             </div>
           </div>
+          <p>{company}</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex item-center gap-1">
@@ -58,7 +64,7 @@ const JobListItem = ({ jobDetails }) => {
             </p>
           </div>
           <p className="m-0 text-gray-500 font-light text-base font-roboto ml-auto">
-            {packagePerAnnum}
+            {packagePerAnnum ? packagePerAnnum : `${salaryFrom}-${salaryTo}`}
           </p>
         </div>
       </Link>

@@ -1,19 +1,28 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { IoMdClose } from 'react-icons/io'
+import useFilterData from '../../hooks/useFilterData'
 import {
   certificateOptions,
   educationOptions,
   experienceOptions,
   hobbyOptions,
 } from '../../options'
-import { IoMdClose } from 'react-icons/io'
+import axios from 'axios'
+import { arrangeData } from '../../data/createjobsdata'
 
-export const FilterSidebar = ({ allData, setFilteredData, title = 'Jobs' }) => {
+export const FilterSidebar = ({
+  initialData,
+  setFilteredData,
+  title = 'Jobs',
+}) => {
+  const [jobsData, setJobsData] = useState([])
   const [filter, setFilter] = useState({
     education: [],
     hobbies: [],
     certificates: [],
     experience: null,
   })
+  const [search, setSearch] = useState('')
   const [length, setLength] = useState(0)
 
   const handleFilterChange = (e, field) => {
@@ -43,47 +52,58 @@ export const FilterSidebar = ({ allData, setFilteredData, title = 'Jobs' }) => {
       }
     }
   }
-  useEffect(() => {
-    let filtered = allData
-    if (filter.education.length > 0) {
-      filtered = filtered.filter(job =>
-        filter.education.every(edu => job.education.includes(edu))
-      )
+  const debounce = (func, delay = 500) => {
+    let timeout
+    return (...args) => {
+      clearTimeout(timeout)
+      timeout = setTimeout(() => {
+        func(...args)
+      }, delay)
     }
-    if (filter.hobbies.length > 0) {
-      filtered = filtered.filter(job =>
-        filter.hobbies.every(hobby => job.hobby.includes(hobby))
-      )
-    }
-    if (filter.certificates.length > 0) {
-      filtered = filtered.filter(job =>
-        filter.certificates.every(cert => job.certificates.includes(cert))
-      )
-    }
-    if (filter.experience) {
-      filtered = filtered.filter(job => job.experience === filter.experience)
-    }
-    // console.log('filtered', filtered)
+  }
 
-    setFilteredData(filtered)
-    setLength(filtered.length)
-  }, [filter, allData, setFilteredData])
-  // console.log(filter)
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        if (jobsData.length > 0 || title !== 'Jobs') return
+        const response = await axios.get('https://jsonfakery.com/jobs')
+        setJobsData(arrangeData(response.data))
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    fetchAllData()
+  }, [])
+
+  // fetchAllData()
+  debounce(
+    useFilterData(
+      jobsData.length === 0 ? initialData : jobsData,
+      initialData,
+      filter,
+      setFilteredData,
+      setLength,
+      search
+    )
+  )
+
   return (
     <div className="scrollbar-hide">
       <div className="bg-white p-4">
         {filter.education.length > 0 ||
         filter.hobbies.length > 0 ||
         filter.certificates.length > 0 ||
-        filter.experience ? (
+        filter.experience ||
+        search ? (
           <div className="flex  justify-between item-center">
             <h3 className="font-semibold">
               {' '}
-              Filtered {title} ({length})
+              {title} ({length})
             </h3>
             <button
               className="ml-4 bg-red-300 text-gray-600 hover:bg-red-400   text-xs rounded-md p-1 cursor-pointer"
-              onClick={() =>
+              onClick={() => {
                 setFilter(prevFilter => ({
                   ...prevFilter,
                   education: [],
@@ -91,7 +111,8 @@ export const FilterSidebar = ({ allData, setFilteredData, title = 'Jobs' }) => {
                   certificates: [],
                   experience: null,
                 }))
-              }
+                setSearch('')
+              }}
             >
               Clear All
             </button>
@@ -102,7 +123,25 @@ export const FilterSidebar = ({ allData, setFilteredData, title = 'Jobs' }) => {
           </div>
         )}
       </div>
-      <div className="p-4 hide-scrollbar shadow-lg bg-white  h-[calc(100vh-128px)] scrollbar-hide overflow-y-auto">
+      <div className="p-4 bg-white flex items-center">
+        <input
+          type="text"
+          id="search"
+          placeholder="Search..."
+          className="w-full p-2 border border-gray-1200 rounded-lg focus:shadow-sm focus:border-indigo-300 focus:outline-none transition duration-150 ease-in-out"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
+        {search && (
+          <button
+            className="ml-4   text-gray-700 hover:text-gray-900  rounded-md p-1 cursor-pointer"
+            onClick={() => setSearch('')}
+          >
+            <IoMdClose />
+          </button>
+        )}
+      </div>
+      <div className="p-4 hide-scrollbar shadow-lg bg-white  h-[calc(100vh-200px)] scrollbar-hide overflow-y-auto">
         <div className="flex mb-2 item-center">
           <h3 className="font-semibold">Filter by Education</h3>
           {filter.education.length > 0 && (
@@ -198,7 +237,7 @@ export const FilterSidebar = ({ allData, setFilteredData, title = 'Jobs' }) => {
         {experienceOptions.map(option => (
           <label key={option} className="block text-sm">
             <input
-              type="checkbox"
+              type="radio"
               value={option}
               checked={filter.experience === option}
               className="mr-2 text-xs"

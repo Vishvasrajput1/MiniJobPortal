@@ -13,17 +13,12 @@ export const Candidates = () => {
   const [filteredCandidates, setFilteredCandidates] = useState([])
 
   useEffect(() => {
-    console.log('candidates', candidatesData)
     const fetchCandidates = async () => {
       const candidatesData = await allCandidates.filter(
         candidate => candidate.job_id === id && !candidate.isRejected
       )
       setCandidates(candidatesData)
       setFilteredCandidates(candidatesData)
-      console.log(
-        'after remove',
-        allCandidates.filter(candidate => candidate.job_id === id)
-      )
     }
 
     fetchCandidates()
@@ -33,7 +28,7 @@ export const Candidates = () => {
     <>
       <div className="flex overflow-hidden max-h-[calc(100vh-72px)] bg-gray-100">
         <FilterSidebar
-          allData={candidates}
+          initialData={candidates}
           setFilteredData={setFilteredCandidates}
           title="Candidates"
         />

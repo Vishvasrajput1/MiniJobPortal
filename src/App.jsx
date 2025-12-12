@@ -10,6 +10,7 @@ import { ApplyForm } from './components/Aplly/ApplyForm'
 import { MyJobs } from './components/MyJobs'
 import { ManageJobs } from './components/ManageJobs/ManageJobs'
 import { Candidates } from './components/Candidates/Candidates'
+import { AddEditJob } from './components/AddJob/AddEditJob'
 
 function App() {
   return (
@@ -19,7 +20,7 @@ function App() {
           <Route path="/jobs/:id" element={<JobDetail />} />
           <Route path="/my-jobs" element={<MyJobs />} />
           <Route path="/add-job" element={<AddJob />} />
-          <Route path="/jobs/:id/edit" element={<AddJob />} />
+          <Route path="/jobs/:id/edit" element={<AddEditJob />} />
           <Route path="/jobs/:id/manage-candidates" element={<Candidates />} />
           <Route path="/jobs/:id/apply" element={<ApplyForm />} />
           <Route path="/manage-jobs" element={<ManageJobs />} />

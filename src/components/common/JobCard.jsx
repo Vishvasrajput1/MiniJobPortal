@@ -3,17 +3,20 @@ import { AiFillStar } from 'react-icons/ai'
 import { BsFillBriefcaseFill } from 'react-icons/bs'
 import { FaBookmark, FaRegBookmark } from 'react-icons/fa'
 import { IoLocationSharp } from 'react-icons/io5'
-import { useDispatch } from 'react-redux'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { removeSavedJob, saveJob } from '../../feature/jobs/jobsSlice'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useLocation, useNavigate } from 'react-router-dom'
+import {
+  addJobView,
+  removeSavedJob,
+  saveJob,
+} from '../../feature/jobs/jobsSlice'
 
-const JobCard = ({ jobDetails }) => {
-  // console.log('jobDetails', jobDetails)
+const JobCard = ({ jobDetails, isSavedJob = false }) => {
   const dispatch = useDispatch()
-  const appliedJobsIds = useSelector(state => state.jobManager.appliedJobs)
+  const appliedJobs = useSelector(state => state.jobManager.appliedJobs)
+  const savedJobs = useSelector(state => state.jobManager.savedJobs)
+  const appliedJobsIds = appliedJobs?.map(job => job?.id)
 
-  const [saved, setSaved] = useState(jobDetails.isSaved)
   const loc = useLocation()
   const showRemove = loc.pathname.includes('/my-jobs')
   const navigate = useNavigate()
@@ -21,22 +24,33 @@ const JobCard = ({ jobDetails }) => {
   const {
     company_logo_url: companyLogoUrl,
     employment_type: employmentType,
-    job_description: jobDescription,
-    location,
+    description: jobDescription,
+    job_category: jobCategory,
+    is_remote_work: isRemoteWork,
     package_per_annum: packagePerAnnum,
+    salary_from: salaryFrom,
+    salary_to: salaryTo,
+    number_of_opening: numberOfOpenings,
+    qualifications,
+    company,
+    contact,
+    application_deadline,
+    created_at,
+    location,
     rating,
     certificates,
     hobby,
     education,
     experience,
     title,
+    skills,
     id,
   } = jobDetails
+  const [saved, setSaved] = useState(savedJobs.find(job => job.id === id))
 
   const handleApplyClick = e => {
     e.stopPropagation()
     e.preventDefault()
-    console.log('appliedJobsIds', appliedJobsIds)
 
     if (!appliedJobsIds.includes(id)) {
       navigate(`/jobs/${id}/apply`)
@@ -50,7 +64,6 @@ const JobCard = ({ jobDetails }) => {
 
     dispatch(saveJob(jobDetails))
     setSaved(true)
-    console.log('e', e, 'jobDetails', jobDetails)
   }
   const handleRemoveJob = e => {
     e.stopPropagation()
@@ -59,22 +72,23 @@ const JobCard = ({ jobDetails }) => {
     setSaved(false)
   }
   return (
-    <div className="bg-white border w-full border-gray-200 rounded-md cursor-pointer">
-      <Link
-        to={`/jobs/${id}`}
-        className="text-decoration-none flex flex-col gap-4 p-3"
-      >
+    <div
+      id="job-card"
+      className="bg-white border w-full border-gray-200 rounded-md"
+    >
+      <div className="text-decoration-none flex flex-col gap-4 p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img
               src={companyLogoUrl}
               alt="company logo"
-              className="size-18 object-cover"
+              className="size-18 object-cover rounded-md"
             />
             <div className="title-rating-container-card">
               <h1 className="m-0 text-gray-900 font-roboto text-lg font-bold mb-1.5">
                 {title}
               </h1>
+              <p>{jobCategory}</p>
               <div className="flex items-center gap-2">
                 <AiFillStar className="text-#fbbf24 size-4" />
                 <p className="m-0 text-gray-400 font-roboto text-base font-medium">
@@ -83,10 +97,23 @@ const JobCard = ({ jobDetails }) => {
               </div>
             </div>
           </div>
+
           <div
             className="flex items-center gap-3"
             onClick={e => e.stopPropagation()}
           >
+            <button
+              type="button"
+              className={`px-3 py-1 bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500 disabled:bg-indigo-200 disabled:text-gray-400 disabled:cursor-not-allowed`}
+              onClick={e => {
+                e.stopPropagation()
+                dispatch(addJobView(jobDetails))
+                navigate(`/jobs/${id}`)
+              }}
+            >
+              view Details
+            </button>
+
             <button
               type="button"
               disabled={appliedJobsIds.includes(id)}
@@ -122,6 +149,21 @@ const JobCard = ({ jobDetails }) => {
             )}
           </div>
         </div>
+        <div>
+          <h2>
+            <span className="text-lg font-semibold">Company :</span>{' '}
+            <span className="text-gray-900">{company}</span>
+          </h2>
+          <div>
+            Contact:<span> {contact}</span>
+          </div>
+          <div>
+            Deadline: <span>{application_deadline}</span>
+          </div>
+          <div>
+            Number of openings: <span>{numberOfOpenings}</span>
+          </div>
+        </div>
         <div className="flex items-center gap-4">
           <div className="flex item-center  gap-1">
             <p className="flex items-center">
@@ -136,11 +178,12 @@ const JobCard = ({ jobDetails }) => {
               <BsFillBriefcaseFill />
             </p>
             <p className="text-gray-500 font-light text-base font-roboto">
-              {employmentType}
+              {employmentType} {isRemoteWork === 1 && '(Remote)'}
             </p>
           </div>
           <p className="m-0 text-gray-500 font-light text-base font-roboto ml-auto">
-            {packagePerAnnum}
+            <span className="text-gray-900 font-semibold">Salary :</span>{' '}
+            {packagePerAnnum ? packagePerAnnum : `${salaryFrom}-${salaryTo}`}
           </p>
         </div>
         <div className="flex  flex-col gap-2">
@@ -164,6 +207,16 @@ const JobCard = ({ jobDetails }) => {
             Hobbies:{' '}
             <span className="text-gray-500 text-sm">{hobby?.join(', ')}</span>
           </p>
+          <p className="m-0 text-gray-900 font-light text-base font-roboto">
+            Skills:{' '}
+            <span className="text-gray-500 text-sm">{skills?.join(', ')}</span>
+          </p>
+          <p className="m-0 text-gray-900 font-light text-base font-roboto">
+            Qualification:{' '}
+            <span className="text-gray-500 text-sm">
+              {qualifications?.split(', ')}
+            </span>
+          </p>
         </div>
         <hr className="separator" />
         <div>
@@ -174,7 +227,7 @@ const JobCard = ({ jobDetails }) => {
             {jobDescription}
           </p>
         </div>
-      </Link>
+      </div>
     </div>
   )
 }

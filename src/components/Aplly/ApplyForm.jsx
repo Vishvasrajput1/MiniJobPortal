@@ -39,8 +39,6 @@ export const ApplyForm = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const handleChange = e => {
-    console.log(e.target.name, e.target.value)
-
     const { name, value } = e.target
     if (name === 'hobby' || name === 'certificates' || name === 'education') {
       setFormData({
@@ -50,7 +48,6 @@ export const ApplyForm = () => {
           : [...formData[name], value],
       })
     } else if (name === 'resume' || name === 'coverLetter') {
-      console.log(e.target.files[0])
       const file = e.target.files[0]
       const url = URL.createObjectURL(file)
       setFormData({
@@ -91,17 +88,23 @@ export const ApplyForm = () => {
 
     if (data.resume && data.resume.size > 1024 * 1024 * 2) {
       newErrors.resume = 'Resume size should be less than 2MB'
-      toast.error('Resume size should be less than 2MB', {
-        position: 'top-center',
-        autoClose: 2000,
-      })
     }
     if (data.coverLetter.size > 1000000) {
       newErrors.coverLetter = 'Cover Letter size should be less than 1MB'
-      toast.error('Cover Letter size should be less than 1MB', {
-        position: 'top-center',
-        autoClose: 2000,
-      })
+    }
+    if (
+      data.resume &&
+      data.resume.type.split('/')[1] !== 'pdf' &&
+      data.resume.type.split('/')[0] !== 'image'
+    ) {
+      newErrors.resume = 'Resume should be in pdf or image format'
+    }
+    if (
+      data.coverLetter &&
+      data.coverLetter?.type.split('/')[1] !== 'pdf' &&
+      data.coverLetter?.type?.split('/')[0] !== 'image'
+    ) {
+      newErrors.coverLetter = 'Cover Letter should be in pdf or image format'
     }
 
     return newErrors
@@ -112,7 +115,6 @@ export const ApplyForm = () => {
     const validationErrors = validateForm(formData)
 
     if (Object.keys(validationErrors).length === 0) {
-      console.log('Form Payload:', formData)
       dispatch(addCandidate({ ...formData, job_id: id }))
 
       setErrors({})
@@ -128,7 +130,6 @@ export const ApplyForm = () => {
         position: 'top-center',
         autoClose: 2000,
       })
-      console.error('Validation Errors:', validationErrors)
     }
   }
 
@@ -178,9 +179,9 @@ export const ApplyForm = () => {
       tag: 'input',
     },
     {
-      id: 'previos company',
-      name: 'previos company',
-      label: 'Previos Company',
+      id: 'previous_company',
+      name: 'previous_company',
+      label: 'Previous Company',
       paceholder: 'Enter your previos company',
       type: 'text',
       tag: 'input',
@@ -194,9 +195,9 @@ export const ApplyForm = () => {
       tag: 'input',
     },
     {
-      id: 'marital status',
-      name: 'marital_status',
-      label: 'Marital Status',
+      id: 'maritial_status',
+      name: 'maritial_status',
+      label: 'Maritial Status',
       type: 'select',
       options: maritalStatusOptions,
       tag: 'select',

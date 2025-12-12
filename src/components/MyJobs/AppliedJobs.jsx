@@ -3,30 +3,8 @@ import { useSelector } from 'react-redux'
 import JobListItem from '../common/JobListItem'
 
 export const AppliedJobs = () => {
-  const appliedJobsIds = useSelector(state => state.jobManager.appliedJobs)
-  const jobsData = useSelector(state => state.jobManager.jobs)
-  console.log('appliedJobs', appliedJobsIds)
-  const [isLoading, setIsLoading] = useState(true)
-  const [appliedJobs, setAppliedJobs] = useState([])
-  useEffect(() => {
-    const fetchJobDetails = async () => {
-      try {
-        setIsLoading(true)
-
-        const jobDetail = await jobsData.filter(job =>
-          appliedJobsIds.includes(job.id)
-        )
-        console.log(jobDetail)
-        setAppliedJobs(jobDetail)
-      } catch (err) {
-        console.log(err)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchJobDetails()
-  }, [jobsData, appliedJobsIds])
+  const appliedJobs = useSelector(state => state.jobManager.appliedJobs)
+  const [isLoading, setIsLoading] = useState(false)
 
   return (
     <div className="flex-1 w-full mt-4 overflow-y-auto space-y-4 hide-scrollbar">
