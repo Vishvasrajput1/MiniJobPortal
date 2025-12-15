@@ -201,44 +201,6 @@ export const AddJob = ({ isEdit, jobId: id }) => {
     }
   }
 
-  // const validateForm = data => {
-  //   const newErrors = {}
-
-  //   formConfig.forEach(field => {
-  //     if (field.required && !data[field.name]) {
-  //       newErrors[field.name] = `${
-  //         field.label.charAt(0).toUpperCase() + field.label.slice(1)
-  //       } is required.`
-  //     }
-  //   })
-  //   if (!data.hobby || data.hobby.length === 0) {
-  //     newErrors.hobby = 'Hobby is required.'
-  //   }
-  //   if (!data.certificates || data.certificates.length === 0) {
-  //     newErrors.certificates = 'Certificates is required.'
-  //   }
-  //   if (!data.education || data.education.length === 0) {
-  //     newErrors.education = 'Education is required.'
-  //   }
-
-  //   if (
-  //     data.company_logo_url &&
-  //     !/^(ftp|http|https):\/\/[^ "]+$/.test(data.company_logo_url)
-  //   ) {
-  //     newErrors.company_logo_url = 'Please enter a valid URL.'
-  //   }
-  //   if (
-  //     data.rating &&
-  //     (isNaN(Number(data.rating)) ||
-  //       Number(data.rating) < 0 ||
-  //       Number(data.rating) > 5)
-  //   ) {
-  //     newErrors.rating = 'Rating must be between 0 and 5.'
-  //   }
-
-  //   return newErrors
-  // }
-
   const handleAddJob = e => {
     e.preventDefault()
     const validationErrors = validateForm(formData, formConfig)
@@ -297,7 +259,11 @@ export const AddJob = ({ isEdit, jobId: id }) => {
             isDarkMode ? 'bg-gray-800' : 'bg-white'
           } p-8 hide-scrollbar rounded-lg overflow-y-auto shadow-xl w-full max-w-2xl mx-auto scrollbar-hide`}
         >
-          <h1 className={`text-3xl font-bold mb-6  text-center ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+          <h1
+            className={`text-3xl font-bold mb-6  text-center ${
+              isDarkMode ? 'text-white' : 'text-gray-800'
+            }`}
+          >
             {isEdit ? 'Update Job' : 'Add Job'}
           </h1>
           <form onSubmit={handleAddJob} className="space-y-4 scrollbar-hide">
