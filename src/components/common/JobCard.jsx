@@ -54,6 +54,7 @@ const JobCard = ({ jobDetails, isSavedJob = false }) => {
 
     if (!appliedJobsIds.includes(id)) {
       navigate(`/jobs/${id}/apply`)
+      dispatch(addJobView(jobDetails))
       return
     }
   }

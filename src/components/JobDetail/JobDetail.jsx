@@ -5,6 +5,7 @@ import { IoLocationSharp } from 'react-icons/io5'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
+  addJobView,
   removeJob,
   removeSavedJob,
   saveJob,
@@ -133,7 +134,10 @@ const JobDetails = () => {
                   <button
                     type="button"
                     className="lg:px-3 lg:py-1 lg:h-10 px-2 py-1 h-8  bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500"
-                    onClick={() => navigate(`/jobs/${id}/apply`)}
+                    onClick={() => {
+                      navigate(`/jobs/${id}/apply`)
+                      dispatch(addJobView(jobDetails))
+                    }}
                   >
                     Apply
                   </button>
