@@ -76,7 +76,6 @@ export const FilterSidebar = ({
     fetchAllData()
   }, [])
 
-  // fetchAllData()
   debounce(
     useFilterData(
       jobsData.length === 0 ? initialData : jobsData,

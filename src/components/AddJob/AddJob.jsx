@@ -32,9 +32,6 @@ export const AddJob = ({ isEdit, jobId: id }) => {
     number_of_opening: '',
   }
 
-  // const loc = useLocation()
-  // const { id } = useParams()
-  // const isEdit = loc.pathname.includes('edit')
   const jobsData = useSelector(state => state.jobManager.jobs)
 
   const [formData, setFormData] = useState(
@@ -131,7 +128,7 @@ export const AddJob = ({ isEdit, jobId: id }) => {
       type: 'date',
       tag: 'input',
     },
-    {
+    !isEdit && {
       id: 'application_deadline',
       name: 'application_deadline',
       label: 'Application Deadline',

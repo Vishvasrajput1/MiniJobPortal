@@ -74,7 +74,7 @@ export const Dashboard = () => {
   }, [page])
 
   return (
-    <>
+    <>    
       <div className="flex overflow-hidden max-h-[calc(100vh-72px)] bg-gray-100">
         <FilterSidebar
           initialData={apiData}

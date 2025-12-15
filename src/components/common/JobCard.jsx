@@ -76,7 +76,7 @@ const JobCard = ({ jobDetails, isSavedJob = false }) => {
       id="job-card"
       className="bg-white border w-full border-gray-200 rounded-md"
     >
-      <div className="text-decoration-none flex flex-col gap-4 p-3">
+      <div className="text-decoration-none flex flex-col lg:gap-4 lg:p-3 gap-3 p-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img
@@ -85,7 +85,7 @@ const JobCard = ({ jobDetails, isSavedJob = false }) => {
               className="size-18 object-cover rounded-md"
             />
             <div className="title-rating-container-card">
-              <h1 className="m-0 text-gray-900 font-roboto text-lg font-bold mb-1.5">
+              <h1 className="m-0 text-gray-900 font-roboto lg:text-lg text-base font-bold mb-1.5">
                 {title}
               </h1>
               <p>{jobCategory}</p>
@@ -99,12 +99,12 @@ const JobCard = ({ jobDetails, isSavedJob = false }) => {
           </div>
 
           <div
-            className="flex items-center gap-3"
+            className="flex flex-shrink-0 items-center lg:gap-3 gap-2"
             onClick={e => e.stopPropagation()}
           >
             <button
               type="button"
-              className={`px-3 py-1 bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500 disabled:bg-indigo-200 disabled:text-gray-400 disabled:cursor-not-allowed`}
+              className={`lg:px-3 lg:py-1 lg:h-10 px-2 py-1 h-8   bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500 disabled:bg-indigo-200 disabled:text-gray-400 disabled:cursor-not-allowed`}
               onClick={e => {
                 e.stopPropagation()
                 dispatch(addJobView(jobDetails))
@@ -117,7 +117,7 @@ const JobCard = ({ jobDetails, isSavedJob = false }) => {
             <button
               type="button"
               disabled={appliedJobsIds.includes(id)}
-              className={`px-3 py-1 bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500 disabled:bg-indigo-200 disabled:text-gray-400 disabled:cursor-not-allowed`}
+              className={`lg:px-3 lg:py-1 lg:h-10 px-2 py-1 h-8  bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500 disabled:bg-indigo-200 disabled:text-gray-400 disabled:cursor-not-allowed`}
               onClick={handleApplyClick}
             >
               {appliedJobsIds.includes(id) ? 'Applied' : 'Apply'}
@@ -133,7 +133,7 @@ const JobCard = ({ jobDetails, isSavedJob = false }) => {
             ) : showRemove ? (
               <button
                 type="button"
-                className="px-3 py-1 bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500"
+                className="lg:px-3 lg:py-1 lg:h-10 px-2 py-1 h-8 bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500"
                 onClick={handleRemoveJob}
               >
                 Remove

@@ -49,7 +49,6 @@ const JobDetails = () => {
     application_deadline,
     number_of_opening: numberOfOpenings,
     job_category: jobCategory,
-    created_at,
     is_remote_work: isRemoteWork,
     experience,
     certificates,
@@ -58,21 +57,14 @@ const JobDetails = () => {
     title,
   } = jobDetails || {}
   const handleSaveJob = e => {
-    e.stopPropagation()
-    e.preventDefault()
-
     dispatch(saveJob(jobDetails))
     setSaved(true)
   }
   const handleRemoveSavedJob = e => {
-    e.stopPropagation()
-    e.preventDefault()
     dispatch(removeSavedJob(id))
     setSaved(false)
   }
   const handleRemoveJobClick = e => {
-    e.stopPropagation()
-    e.preventDefault()
     setShowDeleteModal(true)
   }
 
@@ -100,18 +92,16 @@ const JobDetails = () => {
                 <img
                   src={companyLogoUrl}
                   alt="company logo"
-                  // Slightly larger logo for a full page view
                   className="size-24 object-cover rounded-full shadow-md"
                 />
                 <div>
-                  {/* Larger title for main page prominence */}
-                  <h1 className="text-3xl font-extrabold text-gray-900 mb-1">
+                  <h1 className="lg:text-3xl text-xl lg:font-extrabold font-bold text-gray-900 mb-1">
                     {title}
                   </h1>
                   <p>{jobCategory}</p>
                   <div className="flex items-center gap-2">
                     <AiFillStar className="text-yellow-500 size-6" />
-                    <p className="text-xl font-semibold text-gray-700">
+                    <p className="lg:text-xl text-base font-semibold text-gray-700">
                       {rating}
                     </p>
                   </div>
@@ -121,28 +111,28 @@ const JobDetails = () => {
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    className="px-3 py-1 h-10 bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500"
+                    className="lg:px-3 lg:py-1 lg:h-10 px-2 py-1 h-8  bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500"
                     onClick={handleRemoveJobClick}
                   >
                     Remove
                   </button>
                   <button
                     type="button"
-                    className="px-3 py-1 h-10 bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500"
+                    className="lg:px-3 lg:py-1 lg:h-10 px-2 py-1 h-8  bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500"
                     onClick={() => navigate(`/jobs/${id}/edit`)}
                   >
                     Edit
                   </button>
                 </div>
               ) : appliedJobs?.find(job => job.id === id) ? (
-                <p className="px-3 py-2 h-10 bg-indigo-300 text-white cursor-pointer rounded-md">
+                <p className="h-10 text-center p-2 bg-indigo-300 text-white cursor-pointer rounded-md">
                   Applied
                 </p>
               ) : (
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    className="px-3 py-1 h-10 bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500"
+                    className="lg:px-3 lg:py-1 lg:h-10 px-2 py-1 h-8  bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500"
                     onClick={() => navigate(`/jobs/${id}/apply`)}
                   >
                     Apply
@@ -150,7 +140,7 @@ const JobDetails = () => {
                   {!saved ? (
                     <button
                       type="button"
-                      className="px-3 h-10 py-1 text-indigo-400 cursor-pointer border border-indigo-400 rounded-lg hover:bg-indigo-50"
+                      className="lg:px-3 lg:py-1 lg:h-10 px-2 py-1 h-8  text-indigo-400 cursor-pointer border border-indigo-400 rounded-lg hover:bg-indigo-50"
                       onClick={handleSaveJob}
                     >
                       save
@@ -158,7 +148,7 @@ const JobDetails = () => {
                   ) : (
                     <button
                       type="button"
-                      className="px-3 h-10 py-1 bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500"
+                      className="lg:px-3 lg:py-1 lg:h-10 px-2 py-1 h-8  bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500"
                       onClick={handleRemoveSavedJob}
                     >
                       saved
@@ -167,7 +157,7 @@ const JobDetails = () => {
                 </div>
               )}
             </div>
-            <div className=" rounded-lg p-6 mb-6">
+            <div className=" rounded-lg lg:p-6 lg:mb-6 p-4 mb-4">
               <h2>
                 <span className="text-lg font-semibold">Company :</span>{' '}
                 <span className="text-gray-900">{company}</span>
@@ -204,18 +194,18 @@ const JobDetails = () => {
               </p>
             </div>
 
-            <div className=" rounded-lg p-6 mb-6">
+            <div className=" rounded-lg lg:p-6 lg:mb-6 p-4 mb-4">
               <h2 className="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">
                 Description
               </h2>
               <p className="text-gray-700  mb-6 text-lg">{jobDescription}</p>
             </div>
 
-            <div className="p-6">
+            <div className="lg:p-6 p-4">
               <h2 className="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">
                 Candidate Requirements
               </h2>
-              <ul className="space-y-4 text-gray-700">
+              <ul className="lg:space-y-4 space-y-3 text-gray-700">
                 <li className="flex flex-col md:flex-row">
                   <span className="font-semibold w-40">Education:</span>{' '}
                   <span className="text-gray-600 mt-1 md:mt-0">

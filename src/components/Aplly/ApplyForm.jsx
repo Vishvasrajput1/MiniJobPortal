@@ -119,7 +119,7 @@ export const ApplyForm = () => {
 
       setErrors({})
       setFormData(initialState)
-      toast.success('Job added successfully', {
+      toast.success('Job applied successfully', {
         position: 'top-center',
         autoClose: 2000,
       })

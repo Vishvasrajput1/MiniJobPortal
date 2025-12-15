@@ -14,7 +14,6 @@ function useFilterData(
 ) {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false)
 
-  // const isFiltersOpen = useSelector(state => state.jobManager.isFiltersOpen)
   const handleSearch = (filtered, search) => {
     const filteredSearch = filtered.filter(job =>
       Object.entries(job).some(([key, value]) => {

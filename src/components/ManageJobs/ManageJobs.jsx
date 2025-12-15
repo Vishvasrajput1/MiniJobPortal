@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { removeJob } from '../../feature/jobs/jobsSlice'
 import { DeletePopUp } from '../common/DeletePopUp'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export const ManageJobs = () => {
   const jobsData = useSelector(state => state.jobManager.jobs)
@@ -18,11 +18,15 @@ export const ManageJobs = () => {
   const navigate = useNavigate()
   const isRemove = true
   const handleRemoveJob = () => {
-
     dispatch(removeJob(jobId))
     setShowDeleteModal(false)
     setJobId(null)
   }
+  useEffect(() => {
+    if (jobsData.length === 0) {
+      navigate('/')
+    }
+  }, [jobsData])
 
   return (
     <>
@@ -43,7 +47,7 @@ export const ManageJobs = () => {
           </div>
         ) : (
           <div className="overflow-x-auto max-h-[calc(100vh-128px)] bg-white hide-scrollbar">
-            <table className="table w-full overflow-x-auto">
+            <table className="table w-full overflow-x-auto border border-gray-200">
               <thead className="bg-gray-200 text-gray-600 sticky top-0 ">
                 <tr>
                   <th className="text-center p-3">No</th>
