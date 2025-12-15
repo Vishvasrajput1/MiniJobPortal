@@ -1,12 +1,15 @@
 import { useState } from 'react'
 
-import { FaRegFileLines } from 'react-icons/fa6'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { removeCandidate, selectCandidate } from '../../feature/jobs/jobsSlice'
+import { Button } from './Button'
+import { InfoItem } from './InfoItem'
+import { DocumentLink } from './DocumentLink'
 
 const CandidateCard = ({ candidateDetails }) => {
   const dispatch = useDispatch()
+  const isDarkMode = useSelector(state => state.jobManager.isDarkMode)
   const [selected, setSelected] = useState(candidateDetails.isSelected)
 
   const {
@@ -46,110 +49,119 @@ const CandidateCard = ({ candidateDetails }) => {
     setSelected(false)
   }
   return (
-    <div className="bg-white border border-gray-300 rounded-md ">
-      <div className="text-decoration-none flex flex-col gap-4 p-3">
+    <div
+      className={`${
+        isDarkMode ? 'bg-gray-800 shadow-lg' : 'bg-white shadow-xl'
+      } rounded-xl p-6 transition duration-300 ease-in-out hover:shadow-2xl`}
+    >
+      <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             <img
               src={
                 profile_pic ||
                 'https://cdn.pixabay.com/photo/2016/03/31/19/10/avatar-1294773_1280.png'
               }
-              alt="user"
-              className="w-10 h-10 rounded-full"
+              alt="user avatar"
+              className="w-14 h-14 rounded-full object-cover border-2 border-blue-500"
             />
             <div className="flex flex-col">
-              <span className="font-bold">{name}</span>
-              <span className="text-sm text-indigo-500">{email}</span>
+              <span
+                className={`text-xl font-semibold ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}
+              >
+                {name}
+              </span>
+              <span className="text-sm text-blue-500">{email}</span>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {selected ? (
-              <div className="px-3 py-1 bg-indigo-300 text-white cursor-pointer border-none outline-none rounded-md">
+              <div className="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-lg shadow-md">
                 Selected
               </div>
             ) : (
-              <button
-                onClick={handleSelect}
-                className="px-3 py-1 bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500"
-              >
-                Select
-              </button>
+              <Button text="Select" handleClick={handleSelect} />
             )}
-            <button
-              onClick={handleReject}
-              className="px-3 py-1 bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500"
-            >
-              Remove
-            </button>
+            <Button text="Reject" handleClick={handleReject} />
           </div>
         </div>
-        <div className="flex flex-col gap-2 bg-indigo-50 p-3 border border-indigo-200">
-          <p className=" font-light text-base font-roboto">
-            Phone: <span className="text-gray-800 text-sm">{phone}</span>
-          </p>
-          <p className=" font-light text-base font-roboto">
-            Address: <span className="text-gray-800 text-sm">{address}</span>
-          </p>
-          <p className="font-light text-base font-roboto">
-            Maritial Status:{' '}
-            <span className="text-gray-800 text-sm">{maritialStatus}</span>
-          </p>
-          <p className="font-light text-base font-roboto">
-            Previous Company:{' '}
-            <span className="text-gray-800 text-sm">{previousCompany}</span>
-          </p>
-          <p className="font-light text-base font-roboto">
-            Position: <span className="text-gray-800 text-sm">{position}</span>
-          </p>
+
+        <div
+          className={`flex flex-col gap-3 p-5 rounded-lg ${
+            isDarkMode
+              ? 'border border-gray-700 bg-gray-700/50'
+              : 'border border-gray-200 bg-gray-50'
+          }`}
+        >
+          <InfoItem key={phone} label="Phone" value={phone} isDarkMode={isDarkMode} />
+          <InfoItem key={address} label="Address" value={address} isDarkMode={isDarkMode} />
+          <InfoItem
+            key={maritialStatus}
+            label="Marital Status"
+            value={maritialStatus}
+            isDarkMode={isDarkMode}
+          />
+          <InfoItem
+            key={previousCompany}
+            label="Previous Company"
+            value={previousCompany}
+            isDarkMode={isDarkMode}
+          />
+          <InfoItem key={position} label="Position" value={position} isDarkMode={isDarkMode} />
         </div>
-        <div className="flex  gap-20 bg-indigo-50 p-3 border border-indigo-200">
-          <div className="m-0 text-gray-900  gap-2 flex item-center  text-base font-roboto">
-            <label htmlFor="resume">Resume:</label>
-            <button
-              onClick={e => handleFileClick(e, resume.url)}
-              target="_blank"
-              className="flex items-center gap-2 cursor:pointer hover:text-indigo-400"
-            >
-              <FaRegFileLines />
-              <span className="">View</span>
-            </button>
-          </div>
-          <div className="m-0 text-gray-900 flex item-center gap-2 text-base font-roboto">
-            Cover Letter:{' '}
-            {coverLetter?.url && (
-              <button
-                onClick={e => handleFileClick(e, coverLetter.url)}
-                target="_blank"
-                className="flex items-center gap-2 cursor:pointer hover:text-indigo-400"
-              >
-                <FaRegFileLines />
-                <span className="">View</span>
-              </button>
-            )}
-          </div>
+
+        <div
+          className={`flex flex-wrap gap-6 p-5 rounded-lg ${
+            isDarkMode
+              ? 'bg-gray-700/50 border border-gray-700'
+              : 'bg-white border border-gray-200'
+          }`}
+        >
+          <DocumentLink
+            key={resume?.url}
+            label="Resume"
+            url={resume?.url}
+            handleFileClick={handleFileClick}
+            isDarkMode={isDarkMode}
+          />
+          <DocumentLink
+            key={coverLetter?.url}
+            label="Cover Letter"
+            url={coverLetter?.url}
+            handleFileClick={handleFileClick}
+            isDarkMode={isDarkMode}
+          />
         </div>
-        <div className="flex  flex-col gap-2 bg-indigo-50 p-3 border border-indigo-200">
-          <p className="font-light text-base font-roboto">
-            Education:{' '}
-            <span className="text-gray-800 text-sm">
-              {education?.join(', ')}
-            </span>
-          </p>
-          <p className="font-light text-base font-roboto">
-            Experience:{' '}
-            <span className="text-gray-800 text-sm">{experience}</span>
-          </p>
-          <p className="font-light text-base font-roboto">
-            Certificates:{' '}
-            <span className="text-gray-800 text-sm">
-              {certificates?.join(', ')}
-            </span>
-          </p>
-          <p className="font-light text-base font-roboto">
-            Hobbies:{' '}
-            <span className="text-gray-800 text-sm">{hobby?.join(', ')}</span>
-          </p>
+
+        <div
+          className={`flex flex-col gap-4 p-5 rounded-lg ${
+            isDarkMode
+              ? 'bg-gray-700/50 border border-gray-700'
+              : 'bg-gray-50 border border-gray-200'
+          }`}
+        >
+          <InfoItem
+            label="Education"
+            value={education?.join(', ')}
+            isDarkMode={isDarkMode}
+          />
+          <InfoItem
+            label="Experience"
+            value={experience}
+            isDarkMode={isDarkMode}
+          />
+          <InfoItem
+            label="Certificates"
+            value={certificates?.join(', ')}
+            isDarkMode={isDarkMode}
+          />
+          <InfoItem
+            label="Hobbies"
+            value={hobby?.join(', ')}
+            isDarkMode={isDarkMode}
+          />
         </div>
       </div>
     </div>

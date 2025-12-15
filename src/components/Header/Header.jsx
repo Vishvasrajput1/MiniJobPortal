@@ -3,11 +3,20 @@ import { BsFillBriefcaseFill } from 'react-icons/bs'
 import { FaBookmark } from 'react-icons/fa'
 
 import { Link } from 'react-router-dom'
+import { ToggleThemeButton } from '../common/ToggleThemeButton'
+import { useSelector } from 'react-redux'
 
 const Header = () => {
+  const isDarkMode = useSelector(state => state.jobManager.isDarkMode)
   const activePage = window.location.pathname
   return (
-    <nav className="nav flex border-b border-gray-200">
+    <nav
+      className={`nav flex border-b ${
+        isDarkMode
+          ? 'bg-gray-800 border-gray-600 text-white shadow(10px 10px 20px rgba(250, 247, 247))'
+          : 'border-gray-200'
+      }`}
+    >
       <div className="flex items-center justify-between w-full p-4 px-8">
         <div className="flex items-center text-2xl">
           <Link to="/">
@@ -53,13 +62,14 @@ const Header = () => {
             </Link>
           </li>
         </ul>
-        <div>
+        <div className="flex gap-2 items-center ">
           <Link
             to="/add-job"
-            className="px-5 py-2 bg-indigo-400 text-white cursor-pointer border-none outline-none mt-3 rounded-md hover:bg-indigo-500"
+            className="px-5 py-2 bg-indigo-400 text-white cursor-pointer border-none outline-none  rounded-md hover:bg-indigo-500"
           >
             Add Job
           </Link>
+          <ToggleThemeButton />
         </div>
       </div>
     </nav>

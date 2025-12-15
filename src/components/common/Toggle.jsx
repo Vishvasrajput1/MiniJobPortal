@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 const Toggle = ({
@@ -9,7 +10,7 @@ const Toggle = ({
 }) => {
   // If parent does not control, default to 0
   const [uncontrolledIndex, setUncontrolledIndex] = useState(0)
-
+  const isDarkMode = useSelector(state => state.jobManager.isDarkMode)
   const isControlled = controlledIndex !== undefined
   const activeIndex = isControlled ? controlledIndex : uncontrolledIndex
 
@@ -51,11 +52,15 @@ const Toggle = ({
   return (
     <div
       ref={mainParentRef}
-      className="flex gap-1 text-sm bg-gray-50 p-1 rounded-full border border-gray-200 relative overflow-hidden w-fit"
+      className={`flex gap-1 text-sm  p-1 rounded-full border ${
+        isDarkMode
+          ? 'border-gray-600 bg-gray-900 text-white'
+          : 'border-gray-200 bg-gray-50'
+      } relative overflow-hidden w-fit`}
     >
       {/* highlight bar */}
       <div
-        className="absolute left-0 bg-indigo-400 z-0 transition-transform duration-300 ease-ease rounded-full top-[2px] h-[calc(100%-4px)]"
+        className="absolute left-0 bg-indigo-400 z-0 transition-transform duration-300 ease-ease rounded-full top-0.5 h-[calc(100%-4px)]"
         style={{
           width: `${dimensions.width}px`,
           transform: `translateX(${dimensions.transform}px)`,
@@ -72,7 +77,9 @@ const Toggle = ({
           <Tag
             key={index}
             ref={el => (buttonRefs.current[index] = el)}
-            className={`block font-semibold rounded-full transition-colors text-gray-500 ease-in-out z-1 capitalize
+            className={`block font-semibold rounded-full transition-colors ${
+              isDarkMode ? 'text-gray-400' : 'text-gray-500'
+            } ease-in-out z-1 capitalize
               ${activeIndex === index && `text-white z-10`}
               ${sizeSmall ? 'text-xs py-[7px] px-3' : 'py-2 px-4'}`}
             onClick={() => handleClick(index)}

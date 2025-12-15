@@ -11,6 +11,7 @@ import {
   saveJob,
 } from '../../feature/jobs/jobsSlice'
 import { DeletePopUp } from '../common/DeletePopUp'
+import { Button } from '../common/Button'
 
 const JobDetails = () => {
   const { id } = useParams()
@@ -22,6 +23,8 @@ const JobDetails = () => {
   const appliedJobs = useSelector(state => state.jobManager.appliedJobs)
   const navigate = useNavigate()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+
+  const isDarkMode = useSelector(state => state.jobManager.isDarkMode)
 
   const jobDetails = useMemo(() => {
     return (
@@ -57,15 +60,15 @@ const JobDetails = () => {
     hobby,
     title,
   } = jobDetails || {}
-  const handleSaveJob = e => {
+  const handleSaveJob = () => {
     dispatch(saveJob(jobDetails))
     setSaved(true)
   }
-  const handleRemoveSavedJob = e => {
+  const handleRemoveSavedJob = () => {
     dispatch(removeSavedJob(id))
     setSaved(false)
   }
-  const handleRemoveJobClick = e => {
+  const handleRemoveJobClick = () => {
     setShowDeleteModal(true)
   }
 
@@ -79,16 +82,29 @@ const JobDetails = () => {
       {showDeleteModal && (
         <DeletePopUp
           showDeletePopUp={showDeleteModal}
-          setShowDeletePopUp={setShowDeleteModal}
+          setShowDeletePopUp={() => setShowDeleteModal(false)}
           handleDelete={handleRemoveJob}
+          isDarkMode={isDarkMode}
         />
       )}
-      <div className="bg-gray-100 w-full p-4 flex max-h-[calc(100vh-72px)] h-[calc(100vh-76px)] hide-scrollbar overflow-hidden">
+      <div
+        className={`${
+          isDarkMode ? 'bg-black text-white' : 'bg-gray-100'
+        } w-full p-4 flex max-h-[calc(100vh-72px)] h-[calc(100vh-76px)] hide-scrollbar overflow-hidden`}
+      >
         {!jobDetails ? (
           <p className="mx-auto text-center h-full">Job not found</p>
         ) : (
-          <div className="mx-auto overflow-y-auto w-full flex flex-col bg-white rounded-lg hide-scrollbar">
-            <div className=" flex justify-between sticky top-0 bg-white z-10  p-6 mb-6">
+          <div
+            className={`${
+              isDarkMode ? 'bg-gray-800' : 'bg-white'
+            } mx-auto overflow-y-auto w-full flex flex-col  rounded-lg hide-scrollbar`}
+          >
+            <div
+              className={`flex justify-between sticky top-0 ${
+                isDarkMode ? 'bg-gray-800' : 'bg-white'
+              } z-10  p-6 mb-6`}
+            >
               <div className="flex items-center gap-6">
                 <img
                   src={companyLogoUrl}
@@ -96,13 +112,21 @@ const JobDetails = () => {
                   className="size-24 object-cover rounded-full shadow-md"
                 />
                 <div>
-                  <h1 className="lg:text-3xl text-xl lg:font-extrabold font-bold text-gray-900 mb-1">
+                  <h1
+                    className={`lg:text-3xl text-xl lg:font-extrabold font-bold  mb-1 ${
+                      isDarkMode ? 'text-white' : 'text-gray-900'
+                    }`}
+                  >
                     {title}
                   </h1>
                   <p>{jobCategory}</p>
                   <div className="flex items-center gap-2">
                     <AiFillStar className="text-yellow-500 size-6" />
-                    <p className="lg:text-xl text-base font-semibold text-gray-700">
+                    <p
+                      className={`lg:text-xl text-base font-semibold ${
+                        isDarkMode ? 'text-white' : 'text-gray-900'
+                      }`}
+                    >
                       {rating}
                     </p>
                   </div>
@@ -110,20 +134,14 @@ const JobDetails = () => {
               </div>
               {isRemove ? (
                 <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    className="lg:px-3 lg:py-1 lg:h-10 px-2 py-1 h-8  bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500"
-                    onClick={handleRemoveJobClick}
-                  >
-                    Remove
-                  </button>
-                  <button
-                    type="button"
-                    className="lg:px-3 lg:py-1 lg:h-10 px-2 py-1 h-8  bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500"
-                    onClick={() => navigate(`/jobs/${id}/edit`)}
-                  >
-                    Edit
-                  </button>
+                  <Button text={'Remove'} handleClick={handleRemoveJobClick} />
+                  <Button
+                    text={'Edit'}
+                    handleClick={() => {
+                      navigate(`/jobs/${id}/edit`)
+                      dispatch(addJobView(jobDetails))
+                    }}
+                  />
                 </div>
               ) : appliedJobs?.find(job => job.id === id) ? (
                 <p className="h-10 text-center p-2 bg-indigo-300 text-white cursor-pointer rounded-md">
@@ -131,32 +149,21 @@ const JobDetails = () => {
                 </p>
               ) : (
                 <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    className="lg:px-3 lg:py-1 lg:h-10 px-2 py-1 h-8  bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500"
-                    onClick={() => {
+                  <Button
+                    text="Apply"
+                    handleClick={() => {
                       navigate(`/jobs/${id}/apply`)
                       dispatch(addJobView(jobDetails))
                     }}
-                  >
-                    Apply
-                  </button>
+                  />
                   {!saved ? (
-                    <button
-                      type="button"
-                      className="lg:px-3 lg:py-1 lg:h-10 px-2 py-1 h-8  text-indigo-400 cursor-pointer border border-indigo-400 rounded-lg hover:bg-indigo-50"
-                      onClick={handleSaveJob}
-                    >
-                      save
-                    </button>
+                    <Button text="Save" handleClick={handleSaveJob} size="10" />
                   ) : (
-                    <button
-                      type="button"
-                      className="lg:px-3 lg:py-1 lg:h-10 px-2 py-1 h-8  bg-indigo-400 text-white cursor-pointer border-none outline-none rounded-md hover:bg-indigo-500"
-                      onClick={handleRemoveSavedJob}
-                    >
-                      saved
-                    </button>
+                    <Button
+                      text="Saved"
+                      handleClick={handleRemoveSavedJob}
+                      size="10"
+                    />
                   )}
                 </div>
               )}
@@ -164,7 +171,9 @@ const JobDetails = () => {
             <div className=" rounded-lg lg:p-6 lg:mb-6 p-4 mb-4">
               <h2>
                 <span className="text-lg font-semibold">Company :</span>{' '}
-                <span className="text-gray-900">{company}</span>
+                <span className={isDarkMode ? 'text-white' : 'text-gray-900'}>
+                  {company}
+                </span>
               </h2>
               <div>
                 Contact:<span> {contact}</span>
@@ -180,73 +189,157 @@ const JobDetails = () => {
               <div className="flex items-center gap-8 text-gray-600">
                 <div className="flex items-center gap-3">
                   <IoLocationSharp className="size-5 text-indigo-600" />
-                  <span className="text-lg">{location}</span>
+                  <span className={`${isDarkMode ? 'text-white' : ''} text-lg`}>
+                    {location}
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <BsFillBriefcaseFill className="size-5 text-indigo-600" />
-                  <span className="text-lg">
+                  <span className={`${isDarkMode ? 'text-white' : ''} text-lg`}>
                     {' '}
                     {employmentType} {isRemoteWork === 1 && '(Remote)'}
                   </span>
                 </div>
               </div>
-              <p className="text-xl font-bold text-green-700 mt-4 md:mt-0">
+              <p
+                className={`text-xl font-bold mt-4 md:mt-0 ${
+                  isDarkMode ? 'text-gray-100' : 'text-gray-900'
+                }`}
+              >
                 Package :{' '}
-                {packagePerAnnum
-                  ? packagePerAnnum
-                  : `${salaryFrom}-${salaryTo}`}
+                <span
+                  className={`${
+                    isDarkMode ? 'text-yellow-400' : 'text-green-600'
+                  } font-bold`}
+                >
+                  {packagePerAnnum
+                    ? packagePerAnnum
+                    : `${salaryFrom}-${salaryTo}`}
+                </span>
               </p>
             </div>
 
             <div className=" rounded-lg lg:p-6 lg:mb-6 p-4 mb-4">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">
+              <h2
+                className={`text-2xl font-bold  mb-4 border-b pb-2 ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}
+              >
                 Description
               </h2>
-              <p className="text-gray-700  mb-6 text-lg">{jobDescription}</p>
+              <p
+                className={`mb-6 text-lg ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-900'
+                }`}
+              >
+                {jobDescription}
+              </p>
             </div>
 
             <div className="lg:p-6 p-4">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">
+              <h2
+                className={`text-2xl font-bold mb-4 border-b pb-2 ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}
+              >
                 Candidate Requirements
               </h2>
-              <ul className="lg:space-y-4 space-y-3 text-gray-700">
-                <li className="flex flex-col md:flex-row">
-                  <span className="font-semibold w-40">Education:</span>{' '}
-                  <span className="text-gray-600 mt-1 md:mt-0">
-                    {education?.join(', ')}
+              <p
+                className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} `}
+              >
+                <span className="font-semibold">Education:</span>{' '}
+                {education?.map(edu => (
+                  <span
+                    key={`edu-${edu}`}
+                    className={`inline-block ${
+                      isDarkMode
+                        ? 'bg-gray-700 text-gray-100'
+                        : 'bg-gray-100 text-gray-700'
+                    } px-2 py-0.5 rounded-full text-sm font-medium mr-2 mb-1`}
+                  >
+                    {edu}
                   </span>
-                </li>
-                <li className="flex flex-col md:flex-row">
-                  <span className="font-semibold w-40">Experience:</span>{' '}
-                  <span className="text-gray-600 mt-1 md:mt-0">
-                    {experience}
+                ))}
+              </p>
+
+              <p
+                className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} `}
+              >
+                <span className="font-semibold">Experience:</span>{' '}
+                <span
+                  className={`${
+                    isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                  }`}
+                >
+                  {experience}
+                </span>
+              </p>
+
+              <p
+                className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} `}
+              >
+                <span className="font-semibold">Skills:</span>{' '}
+                {skills?.map((skill, index) => (
+                  <span
+                    key={`skill-${skill}-${index}`}
+                    className={`inline-block ${
+                      isDarkMode
+                        ? 'bg-blue-900 text-blue-100'
+                        : 'bg-blue-100 text-blue-800'
+                    } px-2 py-0.5 rounded-full text-sm font-medium mr-2 mb-1`}
+                  >
+                    {skill}
                   </span>
-                </li>
-                <li className="flex flex-col md:flex-row">
-                  <span className="font-semibold w-40">Certificates:</span>{' '}
-                  <span className="text-gray-600 mt-1 md:mt-0">
-                    {certificates?.join(', ')}
+                ))}
+              </p>
+              <p
+                className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} `}
+              >
+                <span className="font-semibold">Hobbies:</span>{' '}
+                {hobby?.map((hb, index) => (
+                  <span
+                    key={`edu-${hb}-${index}`}
+                    className={`inline-block ${
+                      isDarkMode
+                        ? 'bg-gray-700 text-gray-100'
+                        : 'bg-gray-100 text-gray-700'
+                    } px-2 py-0.5 rounded-full text-sm font-medium mr-2 mb-1`}
+                  >
+                    {hb}
                   </span>
-                </li>
-                <li className="flex flex-col md:flex-row">
-                  <span className="font-semibold w-40">Hobbies:</span>{' '}
-                  <span className="text-gray-600 mt-1 md:mt-0">
-                    {hobby?.join(', ')}
+                ))}
+              </p>
+              <p
+                className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} `}
+              >
+                <span className="font-semibold">Certificates:</span>{' '}
+                {certificates?.map((certificate, index) => (
+                  <span
+                    key={`edu-${certificate}-${index}`}
+                    className={`inline-block ${
+                      isDarkMode
+                        ? 'bg-gray-700 text-gray-100'
+                        : 'bg-gray-100 text-gray-700'
+                    } px-2 py-0.5 rounded-full text-sm font-medium mr-2 mb-1`}
+                  >
+                    {certificate}
                   </span>
-                </li>
-                <li className="flex flex-col md:flex-row">
-                  <span className="font-semibold w-40">Skills:</span>{' '}
-                  <span className="text-gray-600 mt-1 md:mt-0">
-                    {skills?.join(', ')}
-                  </span>
-                </li>
-                <li className="flex flex-col md:flex-row">
-                  <span className="font-semibold w-40">Qualifications:</span>{' '}
-                  <span className="text-gray-600 mt-1 md:mt-0">
-                    {qualifications?.split(', ')}
-                  </span>
-                </li>
-              </ul>
+                ))}
+              </p>
+              <p
+                className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} `}
+              >
+                <span className="font-semibold">Languages:</span>{' '}
+                <span
+                  className={`inline-block ${
+                    isDarkMode
+                      ? 'bg-gray-700 text-gray-100'
+                      : 'bg-gray-100 text-gray-700'
+                  } px-2 py-0.5 rounded-full text-sm font-medium mr-2 mb-1`}
+                >
+                  {qualifications?.split('/ ')}
+                </span>
+              </p>
             </div>
           </div>
         )}

@@ -2,14 +2,16 @@ import React, { useState } from 'react'
 import Toggle from '../common/Toggle'
 import { SavedJobs } from './SavedJobs'
 import { AppliedJobs } from './AppliedJobs'
+import { useSelector } from 'react-redux'
 
 export const MyJobs = () => {
   const [activeIndex, setActiveIndex] = useState(0)
+  const isDarkMode = useSelector(state => state.jobManager.isDarkMode)
   const tabs = [{ title: 'Saved Jobs' }, { title: 'Applied Jobs' }]
   const activeTab = tabs[activeIndex]
 
   return (
-    <div className="flex flex-col items-center w-full bg-gray-100 max-h-[calc(100vh-72px)] h-[calc(100vh-76px)] p-4">
+    <div className={`flex flex-col items-center w-full ${isDarkMode ? 'bg-black text-white' : 'bg-gray-100'} max-h-[calc(100vh-72px)] h-[calc(100vh-76px)] p-4`}>
       <Toggle
         options={tabs}
         activeIndex={activeIndex}

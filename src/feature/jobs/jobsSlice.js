@@ -11,6 +11,7 @@ const initialState = {
   appliedJobs: [],
   selectedCandidates: [],
   isFiltersOpen: false,
+  isDarkMode: false,
 }
 
 const jobsSlice = createSlice({
@@ -92,6 +93,9 @@ const jobsSlice = createSlice({
     toggleFilters: (state, action) => {
       state.isFiltersOpen = action.payload
     },
+    toggleDarkMode: (state, action) => {
+      state.isDarkMode = !state.isDarkMode
+    },
   },
 })
 
@@ -108,5 +112,6 @@ export const {
   removeCandidate,
   addJobs,
   toggleFilters,
+  toggleDarkMode,
 } = jobsSlice.actions
 export default jobsSlice.reducer

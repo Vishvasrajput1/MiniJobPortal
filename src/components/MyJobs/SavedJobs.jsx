@@ -3,18 +3,18 @@ import JobCard from '../common/JobCard'
 
 export const SavedJobs = () => {
   const savedJob = useSelector(state => state.jobManager.savedJobs)
-  if (savedJob.length === 0) {
-    return (
-      <div className="p-8 text-center h-[calc(100vh-72px)] my-auto text-lg bg-gray-100">
-        No saved jobs
-      </div>
-    )
-  }
+
   return (
     <div className="flex-1  mt-4 overflow-y-auto space-y-4 w-full hide-scrollbar">
-      {savedJob.map(job => (
-        <JobCard key={job.id} jobDetails={job} isSavedJob={true} />
-      ))}
+      {savedJob.length === 0 ? (
+        <div className="p-8 text-center  text-lg">No saved jobs</div>
+      ) : (
+        <>
+          {savedJob.map(job => (
+            <JobCard key={job.id} jobDetails={job} isSavedJob={true} />
+          ))}
+        </>
+      )}
     </div>
   )
 }

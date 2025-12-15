@@ -11,44 +11,78 @@ import { useEffect, useState } from 'react'
 
 export const ManageJobs = () => {
   const jobsData = useSelector(state => state.jobManager.jobs)
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [jobId, setJobId] = useState(null)
+  const isDarkMode = useSelector(state => state.jobManager.isDarkMode)
+  const [deleteModal, setDeleteModal] = useState({
+    showDeleteModal: false,
+    jobId: null,
+  })
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const isRemove = true
   const handleRemoveJob = () => {
-    dispatch(removeJob(jobId))
-    setShowDeleteModal(false)
-    setJobId(null)
+    dispatch(removeJob(deleteModal.jobId))
+    setDeleteModal({
+      showDeleteModal: false,
+      jobId: null,
+    })
+  }
+  const handleCloseDeleteModal = () => {
+    setDeleteModal({
+      showDeleteModal: false,
+      jobId: null,
+    })
   }
   useEffect(() => {
     if (jobsData.length === 0) {
       navigate('/')
     }
-  }, [jobsData])
+  }, [jobsData, navigate])
 
   return (
     <>
-      {showDeleteModal && (
+      {deleteModal.showDeleteModal && (
         <DeletePopUp
-          showDeletePopUp={showDeleteModal}
-          setShowDeletePopUp={setShowDeleteModal}
+          showDeletePopUp={deleteModal.showDeleteModal}
+          setShowDeletePopUp={handleCloseDeleteModal}
           handleDelete={() => {
             handleRemoveJob()
           }}
+          isDarkMode={isDarkMode}
         />
       )}
-      <div className="max-h-[calc(100vh-72px)] relative p-4 bg-gray-100 w-full overflow-hidden h-[calc(100vh-76px)] space-y-4 hide-scrollbar">
+      <div
+        className={`${
+          isDarkMode ? 'bg-black text-white' : 'bg-gray-100'
+        } max-h-[calc(100vh-72px)] relative p-4  w-full overflow-hidden h-[calc(100vh-76px)] space-y-4 hide-scrollbar`}
+      >
         <div className="text-lg font-semibold text-center">ManageJobs</div>
         {jobsData.length === 0 ? (
-          <div className="p-8 text-center h-[calc(100vh-72px)] my-auto text-lg bg-gray-100">
+          <div
+            className={`p-8 text-center h-[calc(100vh-72px)] my-auto text-lg ${
+              isDarkMode ? 'bg-black text-white' : 'bg-gray-100'
+            }`}
+          >
             No jobs
           </div>
         ) : (
-          <div className="overflow-x-auto max-h-[calc(100vh-128px)] bg-white hide-scrollbar">
-            <table className="table w-full overflow-x-auto border border-gray-200">
-              <thead className="bg-gray-200 text-gray-600 sticky top-0 ">
+          <div
+            className={`${
+              isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100'
+            } overflow-x-auto max-h-[calc(100vh-128px)]  hide-scrollbar `}
+          >
+            <table
+              className={`table w-full overflow-x-auto border ${
+                isDarkMode ? 'border-gray-600' : 'border-gray-200'
+              }`}
+            >
+              <thead
+                className={`${
+                  isDarkMode
+                    ? 'bg-gray-700 text-white'
+                    : 'bg-gray-200 text-gray-600'
+                } sticky top-0 `}
+              >
                 <tr>
                   <th className="text-center p-3">No</th>
                   <th className="text-center p-3">Title</th>
@@ -58,17 +92,16 @@ export const ManageJobs = () => {
                   <th className="text-center p-3">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody
+                className={`divide-y ${
+                  isDarkMode ? 'divide-gray-600' : 'divide-gray-200'
+                }`}
+              >
                 {jobsData.map((job, index) => (
                   <tr key={job.id}>
                     <td className="text-center p-3">{index + 1}</td>
                     <td className="text-center p-3">{job.title}</td>
-                    <td className="text-center p-3">
-                      {/* <div className="mx-auto h-10 w-10 ">
-                      <img src={job.company_logo_url} />
-                    </div> */}
-                      {job.company}
-                    </td>
+                    <td className="text-center p-3">{job.company}</td>
                     <td className="text-center p-3">{job.location}</td>
                     <td className="text-center p-3">
                       <Link
@@ -108,8 +141,10 @@ export const ManageJobs = () => {
                           className="text-red-400  cursor-pointer border-none outline-none  rounded-md hover:text-red-500"
                           type="button"
                           onClick={() => {
-                            setShowDeleteModal(true)
-                            setJobId(job.id)
+                            setDeleteModal({
+                              showDeleteModal: true,
+                              jobId: job.id,
+                            })
                           }}
                         >
                           <FaRegTrashCan sizer={20} />

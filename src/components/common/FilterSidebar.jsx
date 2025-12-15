@@ -9,12 +9,14 @@ import {
 } from '../../options'
 import axios from 'axios'
 import { arrangeData } from '../../data/createjobsdata'
+import { useSelector } from 'react-redux'
 
 export const FilterSidebar = ({
   initialData,
   setFilteredData,
   title = 'Jobs',
 }) => {
+  const isDarkMode = useSelector(state => state.jobManager.isDarkMode)
   const [jobsData, setJobsData] = useState([])
   const [filter, setFilter] = useState({
     education: [],
@@ -89,7 +91,9 @@ export const FilterSidebar = ({
 
   return (
     <div className="scrollbar-hide">
-      <div className="bg-white p-4">
+      <div
+        className={`${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white'} p-4`}
+      >
         {filter.education.length > 0 ||
         filter.hobbies.length > 0 ||
         filter.certificates.length > 0 ||
@@ -101,7 +105,9 @@ export const FilterSidebar = ({
               {title} ({length})
             </h3>
             <button
-              className="ml-4 bg-red-300 text-gray-600 hover:bg-red-400   text-xs rounded-md p-1 cursor-pointer"
+              className={`ml-4 ${
+                isDarkMode ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-red-300 text-gray-600 hover:bg-red-400 '
+              } text-xs rounded-md p-1 cursor-pointer`}
               onClick={() => {
                 setFilter(prevFilter => ({
                   ...prevFilter,
@@ -122,25 +128,39 @@ export const FilterSidebar = ({
           </div>
         )}
       </div>
-      <div className="p-4 bg-white flex items-center">
+      <div
+        className={`${
+          isDarkMode ? 'bg-gray-800 text-white' : 'bg-white'
+        } p-4  flex items-center`}
+      >
         <input
           type="text"
           id="search"
-          placeholder="Search..."
-          className="w-full p-2 border border-gray-1200 rounded-lg focus:shadow-sm focus:border-indigo-300 focus:outline-none transition duration-150 ease-in-out"
+          placeholder="Search by title , description or location ..."
+          className={`w-full p-2 border border-gray-1200 rounded-lg focus:shadow-sm focus:border-indigo-300 focus:outline-none transition duration-150 ease-in-out ${
+            isDarkMode ? 'bg-gray-800 text-white' : 'bg-white'
+          }`}
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
         {search && (
           <button
-            className="ml-4   text-gray-700 hover:text-gray-900  rounded-md p-1 cursor-pointer"
+            className={`ml-4 ${
+              isDarkMode
+                ? 'text-white hover:text-gray-300'
+                : 'text-gray-700 hover:text-gray-900'
+            }  rounded-md p-1 cursor-pointer`}
             onClick={() => setSearch('')}
           >
             <IoMdClose />
           </button>
         )}
       </div>
-      <div className="p-4 hide-scrollbar shadow-lg bg-white  h-[calc(100vh-200px)] scrollbar-hide overflow-y-auto">
+      <div
+        className={`${
+          isDarkMode ? 'bg-gray-800 text-white' : 'bg-white'
+        } p-4 hide-scrollbar shadow-lg  h-[calc(100vh-200px)] scrollbar-hide overflow-y-auto`}
+      >
         <div className="flex mb-2 item-center">
           <h3 className="font-semibold">Filter by Education</h3>
           {filter.education.length > 0 && (

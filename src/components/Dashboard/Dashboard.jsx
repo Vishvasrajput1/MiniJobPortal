@@ -10,6 +10,7 @@ export const Dashboard = () => {
   const [apiData, setApiData] = useState([])
   const [page, setPage] = useState(1)
   const isFiltersOpen = useSelector(state => state.jobManager.isFiltersOpen)
+  const isDarkMode = useSelector(state => state.jobManager.isDarkMode)
 
   const jobsData = useSelector(state => state.jobManager.jobs)
 
@@ -74,8 +75,12 @@ export const Dashboard = () => {
   }, [page])
 
   return (
-    <>    
-      <div className="flex overflow-hidden max-h-[calc(100vh-72px)] bg-gray-100">
+    <>
+      <div
+        className={`flex overflow-hidden max-h-[calc(100vh-72px)] ${
+          isDarkMode ? 'bg-gray-900' : 'bg-gray-100'
+        }`}
+      >
         <FilterSidebar
           initialData={apiData}
           setFilteredData={setFilteredJobs}
@@ -100,7 +105,7 @@ export const Dashboard = () => {
             </button>
           )}
           {isLoading && (
-            <p className="text-center">
+            <p className={`${isDarkMode ? 'text-white' : ''} text-center`}>
               {page >= 10 || isFiltersOpen ? 'No more data' : 'Loading...'}
             </p>
           )}

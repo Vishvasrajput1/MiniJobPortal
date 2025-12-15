@@ -1,34 +1,25 @@
 import { useParams } from 'react-router-dom'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { candidatesData } from '../../data/createjobsdata'
 import CandidateCard from '../common/CandidateCard'
 import { FilterSidebar } from '../common/FilterSidebar'
 
 export const Candidates = () => {
   const allCandidates = useSelector(state => state.jobManager.candidates)
+  const isDarkMode = useSelector(state => state.jobManager.isDarkMode)
   const { id } = useParams()
-  const [candidates, setCandidates] = useState(allCandidates)
-  const [filteredCandidates, setFilteredCandidates] = useState([])
-
-  useEffect(() => {
-    const fetchCandidates = async () => {
-      const candidatesData = await allCandidates.filter(
-        candidate => candidate.job_id === id && !candidate.isRejected
-      )
-      setCandidates(candidatesData)
-      setFilteredCandidates(candidatesData)
-    }
-
-    fetchCandidates()
-  }, [id, allCandidates])
+  const [filteredCandidates, setFilteredCandidates] = useState(
+    allCandidates.filter(
+      candidate => candidate.job_id === id && !candidate.isRejected
+    )
+  )
 
   return (
     <>
-      <div className="flex overflow-hidden max-h-[calc(100vh-72px)] bg-gray-100">
+      <div className={`flex overflow-hidden max-h-[calc(100vh-72px)] ${isDarkMode ? 'bg-black text-white' : 'bg-gray-100'}`}>
         <FilterSidebar
-          initialData={candidates}
+          initialData={allCandidates}
           setFilteredData={setFilteredCandidates}
           title="Candidates"
         />

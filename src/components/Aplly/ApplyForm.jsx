@@ -8,10 +8,12 @@ import {
   hobbyOptions,
   maritalStatusOptions,
 } from '../../options'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { addCandidate } from '../../feature/jobs/jobsSlice'
 import { useNavigate, useParams } from 'react-router-dom'
 import { FcPrevious } from 'react-icons/fc'
+import { validateForm } from '../../helper'
+import { RenderField } from '../common/RenderField'
 
 export const ApplyForm = () => {
   const { id } = useParams()
@@ -38,6 +40,7 @@ export const ApplyForm = () => {
   const [errors, setErrors] = useState({})
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const isDarkMode = useSelector(state => state.jobManager.isDarkMode)
   const handleChange = e => {
     const { name, value } = e.target
     if (name === 'hobby' || name === 'certificates' || name === 'education') {
@@ -66,53 +69,10 @@ export const ApplyForm = () => {
       })
     }
   }
-  const validateForm = data => {
-    const newErrors = {}
-    formConfig.forEach(field => {
-      if (field.required && !data[field.name]) {
-        newErrors[field.name] = `${field.label} is required.`
-      }
-    })
-    if (!data.experience) {
-      newErrors.experience = 'Experience is required.'
-    }
-    if (!data.hobby || data.hobby.length === 0) {
-      newErrors.hobby = 'Hobby is required.'
-    }
-    if (!data.certificates || data.certificates.length === 0) {
-      newErrors.certificates = 'Certificates is required.'
-    }
-    if (!data.education || data.education.length === 0) {
-      newErrors.education = 'Education is required.'
-    }
-
-    if (data.resume && data.resume.size > 1024 * 1024 * 2) {
-      newErrors.resume = 'Resume size should be less than 2MB'
-    }
-    if (data.coverLetter.size > 1000000) {
-      newErrors.coverLetter = 'Cover Letter size should be less than 1MB'
-    }
-    if (
-      data.resume &&
-      data.resume.type.split('/')[1] !== 'pdf' &&
-      data.resume.type.split('/')[0] !== 'image'
-    ) {
-      newErrors.resume = 'Resume should be in pdf or image format'
-    }
-    if (
-      data.coverLetter &&
-      data.coverLetter?.type.split('/')[1] !== 'pdf' &&
-      data.coverLetter?.type?.split('/')[0] !== 'image'
-    ) {
-      newErrors.coverLetter = 'Cover Letter should be in pdf or image format'
-    }
-
-    return newErrors
-  }
 
   const handleApplyJob = e => {
     e.preventDefault()
-    const validationErrors = validateForm(formData)
+    const validationErrors = validateForm(formData, formConfig)
 
     if (Object.keys(validationErrors).length === 0) {
       dispatch(addCandidate({ ...formData, job_id: id }))
@@ -249,98 +209,32 @@ export const ApplyForm = () => {
     },
   ]
 
-  const renderFields = (field, index) => {
-    const { type, name, options, required, label, value, tag } = field
-    const error = errors[name]
-
-    return (
-      <div key={index} className="mb-4">
-        <label className="block text-gray-700 font-semibold mb-2">
-          {label}
-          {required && <span className="text-red-500">*</span>}
-        </label>
-        {tag === 'input' && (
-          <input
-            id={name}
-            key={name}
-            type={type}
-            name={name}
-            placeholder={label}
-            value={value}
-            onChange={handleChange}
-            className={`w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none transition duration-150 ease-in-out ${
-              error
-                ? 'border-red-500 focus:border-red-500'
-                : 'border-gray-300 focus:border-blue-500'
-            }`}
-          />
-        )}
-        {tag === 'textarea' && (
-          <textarea
-            name={name}
-            placeholder={label}
-            value={value}
-            onChange={handleChange}
-            className={`w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none transition duration-150 ease-in-out ${
-              error
-                ? 'border-red-500 focus:border-red-500'
-                : 'border-gray-300 focus:border-blue-500'
-            }`}
-          />
-        )}
-        {tag === 'select' && (
-          <select
-            name={name}
-            value={value}
-            onChange={handleChange}
-            className={`w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none transition duration-150 ease-in-out ${
-              error
-                ? 'border-red-500 focus:border-red-500'
-                : 'border-gray-300 focus:border-blue-500'
-            }`}
-          >
-            <option value="" disabled selected>
-              {label}
-            </option>
-            {options.map(option => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        )}
-        {tag === 'checkbox' && (
-          <div>
-            {options.map(option => (
-              <label key={option} className="flex items-center mb-2">
-                <input
-                  type="checkbox"
-                  name={name}
-                  value={option}
-                  // checked={value.includes(option)}
-                  onChange={handleChange}
-                  className="mr-2"
-                />
-                {option}
-              </label>
-            ))}
-          </div>
-        )}
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-      </div>
-    )
-  }
-
   return (
     <>
       <ToastContainer />
-      <div className="max-h-[calc(100vh-72px)] overflow-hidden bg-gray-100 scrollbar-hide p-4 flex ">
-        <div className="bg-white p-8 hide-scrollbar rounded-lg overflow-y-auto shadow-xl w-full max-w-2xl mx-auto scrollbar-hide">
-          <h1 className="text-3xl font-bold mb-6 text-gray-800 text-center">
+      <div
+        className={`max-h-[calc(100vh-72px)] overflow-hidden ${
+          isDarkMode ? 'bg-black' : 'bg-gray-100'
+        } scrollbar-hide p-4 flex`}
+      >
+        <div
+          className={`${
+            isDarkMode ? 'bg-gray-800' : 'bg-white'
+          } p-8 hide-scrollbar rounded-lg overflow-y-auto shadow-xl w-full max-w-2xl mx-auto scrollbar-hide`}
+        >
+          <h1 className={`text-3xl font-bold mb-6 ${isDarkMode ? 'text-white' : 'text-gray-900'} text-center`}>
             Apply For Job
           </h1>
           <form onSubmit={handleApplyJob} className="space-y-4 scrollbar-hide">
-            {formConfig.map((field, index) => renderFields(field, index))}
+            {formConfig.map((field, index) => (
+              <RenderField
+                key={index}
+                field={field}
+                handleChange={handleChange}
+                errors={errors}
+                formData={formData}
+              />
+            ))}
 
             <button
               type="submit"
